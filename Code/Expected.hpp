@@ -18,12 +18,12 @@ namespace TinyProgram {
 
 // Forward declarations
 namespace impl {
-	template<typename ErrorType>
+	template< typename ErrorType >
 	class UnexpectedType;
 }
 
 template< typename ErrorType >
-impl::UnexpectedType<ErrorType> unexpected(const ErrorType& error);
+impl::UnexpectedType< ErrorType > unexpected(const ErrorType& error);
 
 template< typename ExpectedType, typename ErrorType >
 class Expected;
@@ -31,12 +31,12 @@ class Expected;
 
 
 // Pass keys
-template<typename ErrorType>
+template< typename ErrorType >
 class ConstructorPassKey {
-	friend impl::UnexpectedType<ErrorType> unexpected(const ErrorType& error);
+	template< typename >
+	friend impl::UnexpectedType< ErrorType > unexpected(const ErrorType& error);
 	ConstructorPassKey() {}
 };
-
 
 
 
@@ -45,18 +45,16 @@ namespace impl {
 
 	template< typename ErrorType >
 	class UnexpectedType {
-	private:
+	public:
 
-		explicit UnexpectedType(const ErrorType& error, ConstructorPassKey<ErrorType>)
+		explicit UnexpectedType(const ErrorType& error, ConstructorPassKey< ErrorType >)
 			: error_(error)
 		{}
 
-	public:
-		template<typename ExpectedType>
-		ErrorType get(Badge<Expected<ExpectedType, ErrorType> >) const { return error_; }
+		template< typename ExpectedType >
+		ErrorType get(Badge< Expected< ExpectedType, ErrorType > >) const { return error_; }
 
 	private:
-		public:
 		ErrorType error_;
 	};
 
@@ -65,9 +63,8 @@ namespace impl {
 
 
 template< typename ErrorType >
-impl::UnexpectedType<ErrorType> unexpected(const ErrorType& error) {
-	ConstructorPassKey<ErrorType> foo;
-	return impl::UnexpectedType<ErrorType>(error, ConstructorPassKey<ErrorType>());
+impl::UnexpectedType< ErrorType > unexpected(const ErrorType& error) {
+	return impl::UnexpectedType< ErrorType >(error, ConstructorPassKey< ErrorType >());
 }
 
 
@@ -75,12 +72,12 @@ impl::UnexpectedType<ErrorType> unexpected(const ErrorType& error) {
 template< typename ExpectedType, typename ErrorType >
 class Expected {
 public:
-	explicit Expected(const ExpectedType& expected)
+	Expected(const ExpectedType& expected)
 		: variant_(expected)
 	{}
 
-	Expected(const impl::UnexpectedType<ErrorType>& unexpected)
-		: variant_(unexpected.get(Badge<Expected<ExpectedType, ErrorType> >()))
+	Expected(const impl::UnexpectedType< ErrorType >& unexpected)
+		: variant_(unexpected.get(Badge< Expected< ExpectedType, ErrorType > >()))
 	{}
 
 
@@ -98,7 +95,7 @@ public:
 	}
 
 private:
-	Variant<ExpectedType, ErrorType> variant_;
+	Variant< ExpectedType, ErrorType>  variant_;
 };
 
 
