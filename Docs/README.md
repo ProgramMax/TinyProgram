@@ -4,7 +4,7 @@ Modern software is often slow and bloated.
 TinyProgram is an example program to move in the opposite direction.
 It can be used as a template.
 
-![Example screenshot on Win98](Win98 screenshot.png)]
+![Example screenshot on Win98](Win98 screenshot.png)
 
 ## Stipulations
 
