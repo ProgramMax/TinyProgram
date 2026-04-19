@@ -49,7 +49,7 @@ public:
 
 private:
 	// char aliases with everything. So we use char as the backing data type.
-	char data_[impl::MaxSize<T1, T2>::size::value];
+	char data_[impl::MaxSize<T1, T2>::value];
 	char which_;
 };
 
