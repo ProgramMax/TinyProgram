@@ -49,7 +49,7 @@ extern "C" int _stdcall entry_point() {
 	setup_dynamic_library_system();
 
 	// Load user32.dll
-	Expected<DynamicLibrary, open_dynamic_library_error::Enum> user32 = open_dynamic_library("user32.dll");
+	Expected<DynamicLibrary, open_dynamic_library_error::Enum> user32 = open_dynamic_library("user32");
 	if (!user32.has_value()) {
 		return -1;
 	}
@@ -58,16 +58,14 @@ extern "C" int _stdcall entry_point() {
 
 	// Register the Window Class
 	typedef HICON (_stdcall *LoadIconA_type)(HINSTANCE hInstance, LPCSTR lpIconName);
-	const short LoadIconA_ordinal = 405;
-	LoadIconA_type load_icon = user32->get_function(LoadIconA_ordinal, (LoadIconA_type)NULL);
+	LoadIconA_type load_icon = user32->get_function("LoadIconA", (LoadIconA_type)NULL);
 
 	typedef HCURSOR (_stdcall *LoadCursorA_type)(HINSTANCE hInstance, LPCSTR lpCursorName);
-	const short LoadCursorA_ordinal = 401;
-	LoadCursorA_type load_cursor = user32->get_function(LoadCursorA_ordinal, (LoadCursorA_type)NULL);
+	LoadCursorA_type load_cursor = user32->get_function("LoadCursorA", (LoadCursorA_type)NULL);
 
-	HMODULE instance = GetModuleHandle(NULL);
+	HMODULE instance = GetModuleHandleA(NULL);
 	const char class_name[] = "myWindowClass";
-	WNDCLASSEX wc;
+	WNDCLASSEXA wc;
 	
 	wc.cbSize        = sizeof(WNDCLASSEX);
 	wc.style         = 0;
@@ -75,16 +73,17 @@ extern "C" int _stdcall entry_point() {
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
 	wc.hInstance     = instance;
-	wc.hIcon         = load_icon(NULL, IDI_APPLICATION);
-	wc.hCursor       = load_cursor(NULL, IDC_ARROW);
+	const WORD default_application_icon_id = 32512;
+	wc.hIcon         = load_icon(NULL, reinterpret_cast<LPSTR>(default_application_icon_id));
+	const WORD default_cursor_id = 32512;
+	wc.hCursor       = load_cursor(NULL, reinterpret_cast<LPSTR>(default_cursor_id));
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
 	wc.lpszMenuName  = NULL;
 	wc.lpszClassName = class_name;
-	wc.hIconSm       = load_icon(NULL, IDI_APPLICATION);
+	wc.hIconSm       = load_icon(NULL, reinterpret_cast<LPSTR>(default_application_icon_id));
 
 	typedef ATOM (_stdcall *RegisterClassExA_type)(const WNDCLASSEXA *unnamedParam1);
-	const short RegisterClassExA_ordinal = 473;
-	RegisterClassExA_type register_class_ex = user32->get_function(RegisterClassExA_ordinal, (RegisterClassExA_type)NULL);
+	RegisterClassExA_type register_class_ex = user32->get_function("RegisterClassExA", (RegisterClassExA_type)NULL);
 
 	if (!register_class_ex(&wc)) {
 		return -2;
@@ -93,19 +92,15 @@ extern "C" int _stdcall entry_point() {
 
 
 	// Before we create the window, set the function pointers called from within WindowProcedure()
-	const short DefWindowProcA_ordinal = 133;
-	def_window_proc_g   = user32->get_function(DefWindowProcA_ordinal, (DefWindowProcA_type)NULL);
-	const short PostQuitMessage_ordinal = 465;
-	post_quit_message_g = user32->get_function(PostQuitMessage_ordinal, (PostQuitMessage_type)NULL);
-	const short DestroyWindow_ordinal = 142;
-	destroy_window_g    = user32->get_function(DestroyWindow_ordinal, (DestroyWindow_type)NULL);
+	def_window_proc_g   = user32->get_function("DefWindowProcA", (DefWindowProcA_type)NULL);
+	post_quit_message_g = user32->get_function("PostQuitMessage", (PostQuitMessage_type)NULL);
+	destroy_window_g    = user32->get_function("DestroyWindow", (DestroyWindow_type)NULL);
 
 
 
 	// Create the window
 	typedef HWND (_stdcall *CreateWindowExA_type)(DWORD dwExStyle, LPCSTR lpClassName, LPCSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
-	const short CreateWindowExA_ordinal = 91;
-	CreateWindowExA_type create_window_ex = user32->get_function(CreateWindowExA_ordinal, (CreateWindowExA_type)NULL);
+	CreateWindowExA_type create_window_ex = user32->get_function("CreateWindowExA", (CreateWindowExA_type)NULL);
 
 	HWND window_handle = create_window_ex(WS_EX_CLIENTEDGE, class_name, "Window title", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 240, 120, NULL, NULL, instance, NULL);
 	if (window_handle == NULL) {
@@ -121,12 +116,10 @@ extern "C" int _stdcall entry_point() {
 
 	// Show the window
 	typedef BOOL (_stdcall *ShowWindow_type)(HWND hWnd, int nCmdShow);
-	const short ShowWindow_ordinal = 582;
-	ShowWindow_type show_window = user32->get_function(ShowWindow_ordinal, (ShowWindow_type)NULL);
+	ShowWindow_type show_window = user32->get_function("ShowWindow", (ShowWindow_type)NULL);
 
 	typedef BOOL (_stdcall *UpdateWindow_type)(HWND hWnd);
-	const short UpdateWindow_ordinal = 618;
-	UpdateWindow_type update_window = user32->get_function(UpdateWindow_ordinal, (UpdateWindow_type)NULL);
+	UpdateWindow_type update_window = user32->get_function("UpdateWindow", (UpdateWindow_type)NULL);
 
 
 	// TODO: Actually get the startup info: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa
@@ -138,16 +131,13 @@ extern "C" int _stdcall entry_point() {
 
 	// Run the message pump
 	typedef BOOL (_stdcall *GetMessageA_type)(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax);
-	const short GetMessageA_ordinal = 291;
-	GetMessageA_type get_message = user32->get_function(GetMessageA_ordinal, (GetMessageA_type)NULL);
+	GetMessageA_type get_message = user32->get_function("GetMessageA", (GetMessageA_type)NULL);
 
 	typedef LRESULT (_stdcall *DispatchMessageA_type)(const MSG *lpMsg);
-	const short DispatchMessageA_ordinal = 147;
-	DispatchMessageA_type dispatch_message = user32->get_function(DispatchMessageA_ordinal, (DispatchMessageA_type)NULL);
+	DispatchMessageA_type dispatch_message = user32->get_function("DispatchMessageA", (DispatchMessageA_type)NULL);
 
 	typedef BOOL (_stdcall *TranslateMessage_type)(const MSG *lpMsg);
-	const short TranslateMessage_ordinal = 606;
-	TranslateMessage_type translate_message = user32->get_function(TranslateMessage_ordinal, (TranslateMessage_type)NULL);
+	TranslateMessage_type translate_message = user32->get_function("TranslateMessage", (TranslateMessage_type)NULL);
 
 
 	MSG message;
