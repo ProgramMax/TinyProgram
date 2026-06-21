@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=test - Win32 Debug
+CFG=TinyProgram - Win32 Release
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,7 +13,7 @@ CFG=test - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "TinyProgram.mak" CFG="test - Win32 Debug"
+!MESSAGE NMAKE /f "TinyProgram.mak" CFG="TinyProgram - Win32 Release"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /Zp1 /W3 /O1 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX"..\..\Code\PrecompiledHeader.hpp" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib /nologo /entry:"entry_point" /subsystem:windows /machine:I386 /nodefaultlib /align:4096 /merge:.data=.text /merge:.rdata=.text /section:.text,ERW,ALIGN=1
+# ADD LINK32 /nologo /entry:"entry_point" /subsystem:windows /machine:I386 /nodefaultlib /align:4096 /merge:.data=.text /merge:.rdata=.text /section:.text,ERW,ALIGN=1
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /W3 /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX"..\..\Code\PrecompiledHeader.hpp" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib /nologo /entry:"entry_point" /subsystem:windows /debug /machine:I386 /nodefaultlib /pdbtype:sept
+# ADD LINK32 /nologo /entry:"entry_point" /subsystem:windows /debug /machine:I386 /nodefaultlib /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -100,6 +100,15 @@ SOURCE=..\..\Code\Badge.hpp
 # Begin Source File
 
 SOURCE=..\..\Code\DynamicLibrary.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -108,6 +117,15 @@ SOURCE=..\..\Code\DynamicLibrary.hpp
 # Begin Source File
 
 SOURCE=..\..\Code\EntryPoint.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -119,7 +137,109 @@ SOURCE=..\..\Code\Expected.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Code\FindKernel32.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaLDR.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaLDR.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaSEH.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaSEH.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaStackWalk.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\FindKernel32ViaStackWalk.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\License
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\Memory.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yu"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\Memory.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\PrecompiledHeader.cpp
+
+!IF  "$(CFG)" == "TinyProgram - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "TinyProgram - Win32 Debug"
+
+# ADD CPP /Yc"PrecompiledHeader.hpp"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Code\PrecompiledHeader.hpp
 # End Source File
 # Begin Source File
 

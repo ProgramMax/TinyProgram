@@ -2,16 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
+#include "PrecompiledHeader.hpp"
+
 #include "EntryPoint.hpp"
 
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
 
 
 #include "DynamicLibrary.hpp"
-
+#include "Memory.hpp"
 
 
 // Globals used in WindowProcedure
@@ -24,6 +24,8 @@ static PostQuitMessage_type post_quit_message_g;
 typedef BOOL (_stdcall *DestroyWindow_type)(HWND hWnd);
 static DestroyWindow_type destroy_window_g;
 
+
+//#pragma optimize("q", on)
 
 static LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message, WPARAM wparam, LPARAM lparam) {
 	switch(message) {
@@ -43,10 +45,25 @@ static LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message, WPARAM
 extern "C" int _stdcall entry_point() {
 	using namespace TinyProgram;
 
+
+	// This must be run before anything else.
+	// It relies on values Windows sets in registers upon process creation.
+	// Those registers might be clobbered. So we run this before they are.
+	Expected<char, setup_dynamic_library_system_error::Enum> dynamic_library_system = setup_dynamic_library_system();
+	if (!dynamic_library_system.has_value()) {
+		return -1;
+	}
+
+	// That setup process does no heap allocations.
+	// This is because our program didn't yet have access to the OS primitives for allocating memory.
+	// So step 2 is to setup our own memory system using those OS primitives.
+	setup_memory_system();
+
+
 	//LPSTR command_line = GetCommandLine();
 	//WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), ...)
 
-	setup_dynamic_library_system();
+
 
 	// Load user32.dll
 	Expected<DynamicLibrary, open_dynamic_library_error::Enum> user32 = open_dynamic_library("user32");
@@ -63,7 +80,8 @@ extern "C" int _stdcall entry_point() {
 	typedef HCURSOR (_stdcall *LoadCursorA_type)(HINSTANCE hInstance, LPCSTR lpCursorName);
 	LoadCursorA_type load_cursor = user32->get_function("LoadCursorA", (LoadCursorA_type)NULL);
 
-	HMODULE instance = GetModuleHandleA(NULL);
+	//HMODULE instance = GetModuleHandleA(NULL);
+	HMODULE instance = 0;
 	const char class_name[] = "myWindowClass";
 	WNDCLASSEXA wc;
 	
@@ -147,5 +165,7 @@ extern "C" int _stdcall entry_point() {
 	}
 
 
-	return message.wParam;
+	return static_cast<int>(message.wParam);
 }
+
+//#pragma optimize("q", off)

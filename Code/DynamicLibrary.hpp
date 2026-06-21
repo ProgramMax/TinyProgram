@@ -2,25 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 #ifndef TINYPROGRAM_DYNAMICLIBRARY_HPP
 #define TINYPROGRAM_DYNAMICLIBRARY_HPP
 
 
-
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-
+#include "PrecompiledHeader.hpp"
 
 #include "Expected.hpp"
-
 
 
 namespace TinyProgram {
 
 
-
-void setup_dynamic_library_system();
+namespace setup_dynamic_library_system_error {
+	enum Enum {
+		Kernel32NotFound,
+	};
+}
+Expected<char, setup_dynamic_library_system_error::Enum> setup_dynamic_library_system();
 
 
 

@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 #ifndef TINYPROGRAM_BADGE_HPP
 #define TINYPROGRAM_BADGE_HPP
-
 
 
 // Badge<T> is used to grant fine-grained access control to a function.
@@ -26,7 +26,6 @@
 namespace TinyProgram {
 
 
-
 template<typename T>
 class Badge {
 	friend T;
@@ -35,7 +34,7 @@ class Badge {
 };
 
 
-
 } // namespace TinyProgram
+
 
 #endif // #ifndef TINYPROGRAM_BADGE_HPP

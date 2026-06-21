@@ -2,18 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+
 #ifndef TINYPROGRAM_EXPECTED_HPP
 #define TINYPROGRAM_EXPECTED_HPP
-
 
 
 #include "Badge.hpp"
 #include "Variant.hpp"
 
 
-
 namespace TinyProgram {
-
 
 
 // Forward declarations
@@ -27,7 +25,6 @@ impl::UnexpectedType< ErrorType > unexpected(const ErrorType& error);
 
 template< typename ExpectedType, typename ErrorType >
 class Expected;
-
 
 
 // Pass keys
@@ -88,18 +85,19 @@ public:
 		return &variant_.Get1();
 	}
 	bool has_value() {
-		return variant_.index() == 0;
+		return variant_.index() == 1;
 	}
 	ExpectedType value() {
 		return variant_.Get1();
 	}
 
 private:
-	Variant< ExpectedType, ErrorType>  variant_;
+	Variant< ExpectedType, ErrorType >  variant_;
 };
 
 
 
 } // namespace TinyProgram
+
 
 #endif // #ifndef TINYPROGRAM_EXPECTED_HPP
