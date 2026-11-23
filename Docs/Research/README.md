@@ -1,8 +1,8 @@
-\# Research
+# Research
 
 
 
-\[readble\_header\_test.asm](readable\_header\_test.asm) lays out the headers so we can manipulate individual values for testing. It can be assembled with \[nasm](https://www.nasm.us/).
+[readble_header_test.asm](readable_header_test.asm) lays out the headers so we can manipulate individual values for testing. It can be assembled with [nasm](https://www.nasm.us/).
 
 
 
