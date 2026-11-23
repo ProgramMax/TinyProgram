@@ -14,3 +14,5 @@ It can be used as a template.
 
 These stipulations rule out several techniques.
 People have managed to get a Windows program down to just over a hundred bytes. But those programs won't run, for example.
+
+[Research  can be found here.](Research/README.md)
